@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log In - GameVerse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+    
+    <div class="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <h2 class="text-3xl font-bold text-center text-indigo-400 mb-6">Welcome Back</h2>
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label class="block text-sm mb-1">Email</label>
+                <input type="email" id="email" required
+                    class="w-full p-3 rounded-lg bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <div>
+                <label class="block text-sm mb-1">Password</label>
+                <input type="password" id="password" required
+                    class="w-full p-3 rounded-lg bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+            <button type="submit"
+                class="w-full bg-indigo-500 hover:bg-indigo-600 text-white p-3 rounded-lg font-semibold transition">Log
+                In</button>
+        </form>
+        <p class="text-sm text-center mt-4 text-gray-400" id="message"></p>
+        <p class="text-sm text-center mt-2 text-gray-400">
+            Don't have an account? <a href="signup.html" class="text-indigo-400 hover:underline">Sign up</a>
+        </p>
+    </div>
+
+    <script type="module">
+        // Import các hàm cần thiết từ Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // Cấu hình Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRT5VFIn2NGVzNn15mu_YeQNiz8vEmiL0",
+            authDomain: "game-verse-c777c.firebaseapp.com",
+            projectId: "game-verse-c777c",
+            storageBucket: "game-verse-c777c.appspot.com",
+            messagingSenderId: "413081788819",
+            appId: "1:413081788819:web:e9d1ee9d2be5eb37230866",
+            measurementId: "G-DF5HFT1R49"
+        };
+
+        // Khởi tạo Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Đăng nhập
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then(userCredential => {
+                    // Lưu thông báo vào localStorage để dùng bên index.html
+                    localStorage.setItem("loginMessage", "Login successful!");
+                    window.location.href = "index.html";
+                })
+                .catch(error => {
+                    document.getElementById("message").textContent = error.message;
+                    document.getElementById("message").className = "text-red-400 text-center mt-4";
+                });
+        });
+    </script>
+</body>
+
+</html>
