@@ -24,7 +24,7 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     // Nếu đã đăng nhập
     // Hiển thị email người dùng lên phần tử có id "userName"
-    document.getElementById("userName").textContent = `Welcome, ${user.email}`;
+    document.getElementById("userName").textContent = `${user.email}`;
     // Hiện phần tử userSection (hiển thị các chức năng dành cho user)
     document.getElementById("userSection").classList.remove("hidden");
     // Ẩn nút đăng nhập

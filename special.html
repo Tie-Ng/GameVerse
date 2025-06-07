@@ -7,72 +7,83 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-900 text-white min-h-screen">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
 
-  <header class="bg-gray-800 shadow sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex space-x-4 items-center">
-        <a href="index.html" class="text-white font-bold text-xl hover:text-green-400">GameVerse</a>
-        <a href="gamelist.html" class="text-gray-300 hover:text-white">Game List</a>
-        <a href="wishlist.html" class="text-gray-300 hover:text-white">Wishlist</a>
-        <a href="dashboard.html" class="text-gray-300 hover:text-white">Dashboard</a>
-        <a href="special.html" class="text-white font-semibold underline underline-offset-4">Special Games</a>
+  <!-- Navbar (đồng bộ với gamelist) -->
+  <nav class="bg-gray-800 p-4 w-full z-10 relative">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl text-indigo-400 font-semibold">GameVerse</h1>
+      <div class="flex space-x-4">
+        <a href="index.html" class="text-indigo-400 hover:text-indigo-600 transition">Home</a>
+        <a href="gamelist.html" class="text-indigo-400 hover:text-indigo-600 transition">Games</a>
+        <a href="wishlist.html" class="text-indigo-400 hover:text-indigo-600 transition">Wishlist</a>
+        <a href="dashboard.html" class="text-gray-300 hover:text-white transition">Dashboard</a>
+        <a href="special.html" class="text-gray-300 hover:text-white transition">Special Games</a>
       </div>
       <div class="flex items-center space-x-4">
-        <span class="text-sm text-gray-300">Logged in as: <span id="user-email"
-            class="font-semibold text-white"></span></span>
+        <span class="text-sm text-gray-300">Logged in as: <span id="user-email" class="font-semibold text-white"></span></span>
         <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm">Logout</button>
       </div>
     </div>
-  </header>
+  </nav>
 
-  <div class="max-w-6xl mx-auto p-4">
+  <!-- Main Content -->
+  <main class="container mx-auto p-6 flex-grow">
+
     <h1 class="text-3xl font-bold mb-6">Special Games</h1>
 
     <!-- Admin Form -->
-    <form id="addGameForm" class="hidden max-w-md mx-auto bg-gray-900 p-4 rounded mb-6 space-y-3">
-      <h2 class="text-xl font-bold text-white">Add / Edit Game</h2>
-      <input type="text" name="title" placeholder="Game Title" class="w-full p-2 rounded bg-gray-700 text-white" required />
-      <input type="text" name="image" placeholder="Image URL" class="w-full p-2 rounded bg-gray-700 text-white" required />
-      <input type="text" name="platform" placeholder="Platform" class="w-full p-2 rounded bg-gray-700 text-white" required />
-      <input type="text" name="genre" placeholder="Genre" class="w-full p-2 rounded bg-gray-700 text-white" required />
-      <textarea name="description" placeholder="Description" class="w-full p-2 rounded bg-gray-700 text-white" required></textarea>
-      <div class="flex space-x-2">
-        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded">Save</button>
-        <button type="button" id="cancelEditBtn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 rounded hidden">Cancel</button>
+    <form id="addGameForm" class="hidden max-w-md mx-auto bg-gray-800 p-6 rounded mb-8 space-y-4">
+      <h2 class="text-xl font-bold text-indigo-400">Add / Edit Game</h2>
+      <input type="text" name="title" placeholder="Game Title" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-indigo-400" required />
+      <input type="text" name="image" placeholder="Image URL" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-indigo-400" required />
+      <input type="text" name="platform" placeholder="Platform" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-indigo-400" required />
+      <input type="text" name="genre" placeholder="Genre" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-indigo-400" required />
+      <textarea name="description" placeholder="Description" rows="4" class="w-full p-3 rounded bg-gray-700 text-white focus:outline-indigo-400" required></textarea>
+      <div class="flex space-x-4">
+        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded">Save</button>
+        <button type="button" id="cancelEditBtn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded hidden">Cancel</button>
       </div>
     </form>
 
     <!-- Filters -->
-    <div class="flex flex-col md:flex-row gap-4 mb-4">
-      <select id="filterPlatform" class="bg-gray-700 p-2 rounded">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+      <select id="filterPlatform" class="w-full md:w-1/3 px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-indigo-400">
         <option value="">All Platforms</option>
       </select>
-      <select id="filterGenre" class="bg-gray-700 p-2 rounded">
+      <select id="filterGenre" class="w-full md:w-1/3 px-4 py-2 rounded-lg bg-gray-700 text-white focus:outline-indigo-400">
         <option value="">All Genres</option>
       </select>
     </div>
 
     <!-- Search Bar -->
-    <div class="mb-6">
+    <div class="mb-8">
       <input
         type="text"
         id="searchInput"
         placeholder="Search games..."
-        class="w-full md:w-1/2 p-2 rounded bg-gray-700 text-white"
+        class="w-full md:w-1/2 px-4 py-3 rounded-lg bg-gray-700 text-white focus:outline-indigo-400"
       />
     </div>
 
     <!-- Game List -->
-    <div id="gameList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+    <div id="gameList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
 
     <!-- Pagination -->
-    <div class="flex justify-center mt-6">
-      <button id="prevPage" class="px-4 py-2 bg-gray-700 rounded mr-2">Previous</button>
-      <span id="pageIndicator" class="px-4 py-2">Page 1</span>
-      <button id="nextPage" class="px-4 py-2 bg-gray-700 rounded ml-2">Next</button>
+    <div class="flex justify-center items-center space-x-4 mt-10">
+      <button id="prevPage" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded transition">Previous</button>
+      <span id="pageIndicator" class="text-white font-semibold">Page 1</span>
+      <button id="nextPage" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded transition">Next</button>
     </div>
-  </div>
+
+  </main>
+
+  <!-- Optional footer -->
+  <footer class="bg-gray-800 text-center text-gray-400 py-6 mt-12">
+    <div class="container mx-auto">
+      <p class="text-sm">&copy; 2025 GameVerse. All rights reserved.</p>
+    </div>
+  </footer>
 
   <script type="module" src="./js/special.js"></script>
 </body>

@@ -136,15 +136,17 @@ document.getElementById("addToWishlistBtn").addEventListener("click", () => {
 });
 
 // Hàm tạo sao theo điểm rating
+const starFull = `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-5 h-5 text-yellow-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.962a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.39 2.46a1 1 0 00-.364 1.118l1.287 3.963c.3.922-.755 1.688-1.54 1.118l-3.39-2.46a1 1 0 00-1.175 0l-3.39 2.46c-.784.57-1.838-.196-1.539-1.118l1.287-3.963a1 1 0 00-.364-1.118L2.027 9.39c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.962z"/></svg>`;
+
+const starHalf = `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-5 h-5 text-yellow-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.962a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.39 2.46a1 1 0 00-.364 1.118l1.287 3.963c.3.922-.755 1.688-1.54 1.118L10 13.347V2.927z"/></svg>`;
+
+const starEmpty = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-5 h-5 text-yellow-400" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.962a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.39 2.46a1 1 0 00-.364 1.118l1.287 3.963c.3.922-.755 1.688-1.54 1.118L12 15.347l-3.39 2.46c-.784.57-1.838-.196-1.539-1.118l1.287-3.963a1 1 0 00-.364-1.118L2.027 9.39c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.962z"/></svg>`;
+
 function getStarRating(rating) {
     const starsTotal = 5;
     const fullStars = Math.floor(rating);
     const halfStar = (rating - fullStars) >= 0.5 ? 1 : 0;
     const emptyStars = starsTotal - fullStars - halfStar;
-
-    const starFull = `<svg ...>...</svg>`;  // sao đầy
-    const starHalf = `<svg ...>...</svg>`;  // sao nửa
-    const starEmpty = `<svg ...>...</svg>`; // sao rỗng
 
     return `
         ${starFull.repeat(fullStars)}
@@ -153,6 +155,7 @@ function getStarRating(rating) {
         <span class="ml-2 text-yellow-400 font-semibold text-lg">${rating.toFixed(1)}</span>
     `;
 }
+
 
 // Hàm trả về yêu cầu cấu hình (có thể mở rộng thêm sau)
 function getRequirementText(platforms, type) {

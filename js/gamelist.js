@@ -43,7 +43,7 @@
       if (user) {
         loginBtn.classList.add('hidden');
         userSection.classList.remove('hidden');
-        userName.textContent = `Welcome back, ${user.email}!`;
+        userName.textContent = `${user.email}`;
         if (loginMessage) loginMessage.classList.add('hidden');
         gamesList.classList.remove('hidden');
         fetchFilters();
