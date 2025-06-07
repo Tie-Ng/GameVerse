@@ -17,6 +17,9 @@
         <a href="index.html" class="text-indigo-400 hover:text-indigo-600 transition">Home</a>
         <a href="gamelist.html" class="text-indigo-400 hover:text-indigo-600 transition">Games</a>
         <a href="wishlist.html" class="text-indigo-400 hover:text-indigo-600 transition">Wishlist</a>
+        <a href="dashboard.html" class="text-gray-300 hover:text-white">Dashboard</a>
+        <a href="./special.html" class="text-gray-300 hover:text-white">Special Games</a>
+
       </div>
       <div id="accountSection" class="flex items-center space-x-4">
         <button id="loginBtn" class="text-indigo-400 hover:text-indigo-600 transition">Login</button>
@@ -31,245 +34,30 @@
   <!-- Wishlist Section -->
   <div class="p-8 w-full max-w-7xl mx-auto mt-12">
     <h2 class="text-3xl font-bold text-indigo-400 mb-8">Your Wishlist</h2>
-
-    <div id="wishlistContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-      <!-- Wishlist items will appear here -->
-    </div>
+    <div id="wishlistContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
   </div>
 
-  <!-- Toast Notification -->
+  <!-- Toast -->
   <div id="toast"
     class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
     Removed from wishlist!
   </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-center text-gray-400 py-6 mt-12">
-        <div class="container mx-auto">
-            <p class="text-sm">&copy; 2025 GameVerse. All rights reserved.</p>
-            <div class="mt-4">
-                <a href="https://www.facebook.com" class="text-indigo-400 hover:text-indigo-600 mx-2" target="_blank">Facebook</a>
-                <a href="https://www.twitter.com" class="text-indigo-400 hover:text-indigo-600 mx-2" target="_blank">Twitter</a>
-                <a href="https://www.instagram.com" class="text-indigo-400 hover:text-indigo-600 mx-2" target="_blank">Instagram</a>
-            </div>
-        </div>
-    </footer>
-
-<script type="module">
-  const firebaseConfig = {
-    apiKey: "AIzaSyBRT5VFIn2NGVzNn15mu_YeQNiz8vEmiL0",
-    authDomain: "game-verse-c777c.firebaseapp.com",
-    projectId: "game-verse-c777c",
-    storageBucket: "game-verse-c777c.appspot.com",
-    messagingSenderId: "413081788819",
-    appId: "1:413081788819:web:e9d1ee9d2be5eb37230866",
-    measurementId: "G-DF5HFT1R49"
-  };
-
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      document.getElementById("userName").textContent = `Welcome, ${user.email}`;
-      document.getElementById("userSection").classList.remove("hidden");
-      document.getElementById("loginBtn").classList.add("hidden");
-    } else {
-      document.getElementById("userSection").classList.add("hidden");
-      document.getElementById("loginBtn").classList.remove("hidden");
-    }
-  });
-
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    signOut(auth).then(() => {
-      window.location.href = "index.html";
-    }).catch(error => console.error("Logout error:", error));
-  });
-
-  // Fix dữ liệu wishlist: nếu thiếu addedAt thì gán thêm ngày hiện tại
-  function fixWishlistData() {
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    let changed = false;
-
-    wishlist = wishlist.map(game => {
-      if (!game.addedAt) {
-        changed = true;
-        return { ...game, addedAt: new Date().toLocaleString() };
-      }
-      return game;
-    });
-
-    if (changed) {
-      localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    }
-  }
-
-  // Hàm hiển thị rating sao
-  function getStarRating(rating) {
-    const full = Math.floor(rating);
-    const half = rating % 1 >= 0.5 ? 1 : 0;
-    const empty = 5 - full - half;
-    return `${'\u2605'.repeat(full)}${'\u2605'.repeat(half)}${'\u2606'.repeat(empty)}`
-      .split('')
-      .map(star => `<span class="text-yellow-400">${star}</span>`).join('');
-  }
-
-  // Hiển thị toast thông báo
-  function showToast(message, duration = 2000) {
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.style.opacity = 1;
-    toast.style.pointerEvents = "auto";
-    setTimeout(() => {
-      toast.style.opacity = 0;
-      toast.style.pointerEvents = "none";
-    }, duration);
-  }
-
-  // Hàm load wishlist và render
-  function loadWishlist() {
-    fixWishlistData(); // Fix data trước khi load
-
-    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    const wishlistContainer = document.getElementById("wishlistContainer");
-    wishlistContainer.innerHTML = "";
-
-    if (wishlist.length === 0) {
-      wishlistContainer.innerHTML = `<p class="text-red-400">Your wishlist is empty.</p>`;
-      return;
-    }
-
-    wishlist.forEach(game => {
-      const gameElement = document.createElement("div");
-      gameElement.classList.add("bg-gray-800", "p-4", "rounded-xl", "shadow-lg", "space-y-4", "relative");
-
-      // Note section with edit button
-      gameElement.innerHTML = `
-        <img src="${game.background_image}" alt="${game.name}" class="rounded-xl shadow-lg w-full h-48 object-cover mb-4" />
-        <h3 class="text-xl text-indigo-400 font-semibold">${game.name}</h3>
-        <p class="text-gray-300">Release Date: ${game.released}</p>
-        <div class="flex items-center gap-1 text-lg">${getStarRating(game.rating)}</div>
-        <p class="text-gray-300 text-sm">Added on: ${game.addedAt || 'Unknown'}</p>
-
-        <div class="note-section flex justify-between items-center border border-indigo-600 rounded-md p-2 bg-gray-700 text-gray-300 text-sm">
-          <div class="note-text flex-1 whitespace-pre-wrap">${game.note || "No notes added."}</div>
-          <button class="editNoteBtn bg-indigo-600 hover:bg-indigo-700 text-white rounded px-2 py-1 ml-3 text-sm" data-id="${game.id}">Edit</button>
-        </div>
-
-        <a href="gamedetails.html?id=${game.id}" class="view-details-btn bg-indigo-600 text-white px-4 py-2 rounded-full text-sm hover:bg-indigo-700 transition mt-4 block text-center">View Details</a>
-
-        <button class="removeFromWishlistBtn bg-red-500 text-white px-4 py-2 rounded-full text-sm hover:bg-red-600 transition mt-2 w-full" data-id="${game.id}">
-          Remove from Wishlist
-        </button>
-      `;
-
-      wishlistContainer.appendChild(gameElement);
-    });
-
-    // Event listeners for remove buttons
-    document.querySelectorAll(".removeFromWishlistBtn").forEach(btn => {
-      btn.addEventListener("click", removeFromWishlist);
-    });
-
-    // Event listeners for edit note buttons
-    document.querySelectorAll(".editNoteBtn").forEach(btn => {
-      btn.addEventListener("click", handleEditNote);
-    });
-  }
-
-  // Xoá game khỏi wishlist
-  function removeFromWishlist(event) {
-    const gameId = Number(event.target.getAttribute("data-id"));
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    wishlist = wishlist.filter(game => game.id !== gameId);
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    loadWishlist();
-    showToast("Removed from wishlist!");
-  }
-
-  // Xử lý bật popup edit note
-  function handleEditNote(event) {
-    const gameId = Number(event.target.getAttribute("data-id"));
-    const parent = event.target.closest(".note-section");
-
-    // Nếu popup đang hiện rồi thì xoá popup đó
-    const existingPopup = parent.querySelector(".edit-note-popup");
-    if (existingPopup) {
-      existingPopup.remove();
-      return;
-    }
-
-    // Lấy note hiện tại
-    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    const game = wishlist.find(g => g.id === gameId);
-    const currentNote = game?.note || "";
-
-    // Tạo popup edit note
-    const popup = document.createElement("div");
-    popup.classList.add("edit-note-popup", "absolute", "top-0", "right-0", "z-50", "bg-gray-800", "border", "border-indigo-600", "rounded-md", "p-3", "w-64", "shadow-lg");
-
-    popup.innerHTML = `
-      <textarea class="edit-note-textarea w-full h-24 p-2 bg-gray-700 text-white rounded resize-y" placeholder="Add or edit note...">${currentNote}</textarea>
-      <div class="flex justify-end space-x-2 mt-2">
-        <button class="cancelEditNoteBtn bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">Cancel</button>
-        <button class="saveEditNoteBtn bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded">Save</button>
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-center text-gray-400 py-6 mt-12">
+    <div class="container mx-auto">
+      <p class="text-sm">&copy; 2025 GameVerse. All rights reserved.</p>
+      <div class="mt-4">
+        <a href="https://www.facebook.com" class="text-indigo-400 hover:text-indigo-600 mx-2"
+          target="_blank">Facebook</a>
+        <a href="https://www.twitter.com" class="text-indigo-400 hover:text-indigo-600 mx-2" target="_blank">Twitter</a>
+        <a href="https://www.instagram.com" class="text-indigo-400 hover:text-indigo-600 mx-2"
+          target="_blank">Instagram</a>
       </div>
-    `;
+    </div>
+  </footer>
 
-    parent.style.position = "relative";
-    parent.appendChild(popup);
-
-    // Event Cancel
-    popup.querySelector(".cancelEditNoteBtn").addEventListener("click", () => {
-      popup.remove();
-    });
-
-    // Event Save
-    popup.querySelector(".saveEditNoteBtn").addEventListener("click", () => {
-      const newNote = popup.querySelector(".edit-note-textarea").value.trim();
-      saveNote(gameId, newNote);
-      popup.remove();
-      loadWishlist();
-      showToast("Note saved!");
-    });
-  }
-
-  // Lưu note vào wishlist trong localStorage
-  function saveNote(gameId, note) {
-    let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    wishlist = wishlist.map(game => {
-      if (game.id === gameId) {
-        return { ...game, note };
-      }
-      return game;
-    });
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  }
-
-  // Hàm thêm game vào wishlist (nếu cần)
-  function addToWishlist(game) {
-    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-
-    const gameToAdd = {
-      ...game,
-      addedAt: new Date().toLocaleString(),
-      note: ""
-    };
-
-    wishlist.push(gameToAdd);
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    loadWishlist();
-  }
-
-  // Load wishlist khi mở trang
-  window.onload = loadWishlist;
-
-</script>
-
-
+  <script type="module" src="./wishlist.js"></script>
 </body>
 
 </html>
