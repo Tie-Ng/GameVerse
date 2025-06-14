@@ -8,13 +8,28 @@
 </head>
 
 <body class="bg-gray-900 text-white min-h-screen">
-  <a href="index.html" class="text-indigo-400 hover:text-indigo-600 transition">Home</a>
-  <a href="gamelist.html" class="text-indigo-400 hover:text-indigo-600 transition">Games</a>
-  <a href="wishlist.html" class="text-indigo-400 hover:text-indigo-600 transition">Wishlist</a>
-  <a href="dashboard.html" class="text-gray-300 hover:text-white">Dashboard</a>
-  <a href="./special.html" class="text-gray-300 hover:text-white">Special Games</a>
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4 w-full z-10 relative">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl text-indigo-400 font-semibold">GameVerse</h1>
+      <div class="flex space-x-4">
+        <a href="index.html" class="text-indigo-400 hover:text-indigo-600 transition">Home</a>
+        <a href="gamelist.html" class="text-indigo-400 hover:text-indigo-600 transition">Games</a>
+        <a href="wishlist.html" class="text-indigo-400 hover:text-indigo-600 transition">Wishlist</a>
+        <a href="dashboard.html" class="text-gray-300 hover:text-white">Dashboard</a>
+        <a href="./special.html" class="text-gray-300 hover:text-white">Special Games</a>
+      </div>
+      <div id="accountSection" class="flex items-center space-x-4">
+        <button id="loginBtn" class="text-indigo-400 hover:text-indigo-600 transition">Login</button>
+        <div id="userSection" class="hidden space-x-4">
+          <span id="userName" class="text-gray-400">Welcome, User!</span>
+          <button id="logoutBtn" class="text-indigo-400 hover:text-indigo-600 transition">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
 
-
+  <!-- Game Details -->
   <div class="max-w-4xl mx-auto p-6">
     <a href="special.html" class="text-green-400 hover:underline mb-4 inline-block">← Back to Special Games</a>
     <div id="gameDetails" class="bg-gray-800 p-6 rounded shadow min-h-[300px] flex items-center justify-center">
@@ -23,8 +38,6 @@
   </div>
 
   <script type="module" src="./js/specialdetails.js"></script>
-
-
 </body>
 
 </html>

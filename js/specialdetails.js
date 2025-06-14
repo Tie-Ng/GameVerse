@@ -1,10 +1,13 @@
-// Import các hàm cần thiết từ Firebase SDK phiên bản 10.12.0
+// ===== IMPORT FIREBASE =====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore, doc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getAuth, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// Cấu hình dự án Firebase của bạn (thông tin trên Firebase console)
+// ===== CONFIG FIREBASE =====
 const firebaseConfig = {
   apiKey: "AIzaSyBRT5VFIn2NGVzNn15mu_YeQNiz8vEmiL0",
   authDomain: "game-verse-c777c.firebaseapp.com",
@@ -15,48 +18,54 @@ const firebaseConfig = {
   measurementId: "G-DF5HFT1R49"
 };
 
-// Khởi tạo Firebase app với config ở trên
+// ===== INITIALIZE FIREBASE =====
 const app = initializeApp(firebaseConfig);
-
-// Khởi tạo Firestore database
 const db = getFirestore(app);
+const auth = getAuth(app);
+let currentUserEmail = null;
 
-// Lấy tham số 'id' trong URL (ví dụ: specialdetails.html?id=abc123)
+// ===== THEO DÕI TRẠNG THÁI ĐĂNG NHẬP =====
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUserEmail = user.email;
+    document.getElementById("userName").textContent = `Welcome, ${user.email}`;
+    document.getElementById("userSection").classList.remove("hidden");
+    document.getElementById("loginBtn").classList.add("hidden");
+  } else {
+    currentUserEmail = null;
+    document.getElementById("userSection").classList.add("hidden");
+    document.getElementById("loginBtn").classList.remove("hidden");
+  }
+});
+
+// ===== FUNCTION LOGOUT (TÙY CHỌN) =====
+window.logout = function () {
+  signOut(auth).then(() => {
+    location.reload();
+  });
+};
+
+// ===== LẤY GAME ID TỪ URL =====
 const urlParams = new URLSearchParams(window.location.search);
 const gameId = urlParams.get("id");
 
-// Hàm bất đồng bộ để tải chi tiết game từ Firestore dựa trên gameId
+// ===== LOAD GAME DETAILS =====
 async function loadGameDetails() {
-  // Lấy element container sẽ hiển thị chi tiết game
   const container = document.getElementById("gameDetails");
 
-  // Nếu không có gameId trong URL thì báo lỗi ngay
   if (!gameId) {
     container.innerHTML = "<p class='text-red-400'>Game ID not provided in URL.</p>";
-    return; // Dừng hàm
+    return;
   }
 
   try {
-    console.log("Loading game with ID:", gameId);
-
-    // Tạo reference đến document trong collection "specialGames" với id = gameId
     const docRef = doc(db, "specialGames", gameId);
-
-    // Lấy snapshot của document
     const docSnap = await getDoc(docRef);
 
-    console.log("Document snapshot:", docSnap);
-
-    // Kiểm tra document có tồn tại không
     if (docSnap.exists()) {
-      // Lấy dữ liệu game từ document
       const game = docSnap.data();
-      console.log("Game data:", game);
-
-      // Nếu container ban đầu có class flex, center thì bỏ để hiển thị nội dung rõ ràng
       container.classList.remove("flex", "items-center", "justify-center");
 
-      // Hiển thị chi tiết game vào container dưới dạng HTML
       container.innerHTML = `
         <img src="${game.image}" alt="${game.title}" class="w-full max-w-full h-64 object-cover rounded mb-4" />
         <h1 class="text-3xl font-bold mb-2">${game.title}</h1>
@@ -66,11 +75,9 @@ async function loadGameDetails() {
         <p class="text-sm text-gray-500 mt-4">Game ID: ${gameId}</p>
       `;
     } else {
-      // Nếu không tìm thấy document, hiển thị thông báo game không tồn tại
       container.innerHTML = "<p class='text-yellow-400'>Game not found.</p>";
     }
   } catch (error) {
-    // Nếu có lỗi khi gọi Firestore, in lỗi ra console và hiển thị lỗi cho người dùng
     console.error("Error loading game details:", error);
     container.innerHTML = `
       <p class='text-red-400'>Error loading game details. Check console for details.</p>
@@ -79,5 +86,4 @@ async function loadGameDetails() {
   }
 }
 
-// Gọi hàm loadGameDetails khi trang được tải
 loadGameDetails();
