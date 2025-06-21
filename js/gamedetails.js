@@ -154,7 +154,7 @@ async function loadComments() {
   else if (sortSelect.value === "like") comments.sort((a, b) => b.likes - a.likes);
 
   commentsList.innerHTML = comments.map(c => {
-    const isOwner = c.user === currentUserEmail;
+    const isOwner = c.user === currentUserEmail || currentUserEmail === 'admin@gmail.com';
     const isLiked = likedList.includes(c.id);
     return `
       <div class="bg-gray-700 p-4 rounded-lg" data-id="${c.id}">
@@ -179,7 +179,7 @@ async function loadComments() {
     `;
   }).join("");
 
-  // Like / Unlike
+  // === Like / Unlike functionality ===
   commentsList.querySelectorAll(".like-btn").forEach(btn => {
     btn.addEventListener("click", async e => {
       const commentId = e.target.getAttribute("data-id");
@@ -197,7 +197,6 @@ async function loadComments() {
 
       const alreadyLiked = likedList.includes(commentId);
 
-      // Chống spam click
       if (btn.disabled) return;
       btn.disabled = true;
       setTimeout(() => btn.disabled = false, 1000);
@@ -215,7 +214,7 @@ async function loadComments() {
     });
   });
 
-  // Edit
+  // === Edit functionality ===
   commentsList.querySelectorAll(".edit-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       const parent = e.target.closest("[data-id]");
@@ -228,7 +227,7 @@ async function loadComments() {
     });
   });
 
-  // Cancel edit
+  // === Cancel edit ===
   commentsList.querySelectorAll(".cancel-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       const parent = e.target.closest("[data-id]");
@@ -241,7 +240,7 @@ async function loadComments() {
     });
   });
 
-  // Save edited comment
+  // === Save edited comment ===
   commentsList.querySelectorAll(".save-btn").forEach(btn => {
     btn.addEventListener("click", async e => {
       const parent = e.target.closest("[data-id]");
@@ -254,7 +253,7 @@ async function loadComments() {
     });
   });
 
-  // Delete
+  // === Delete comment ===
   commentsList.querySelectorAll(".delete-btn").forEach(btn => {
     btn.addEventListener("click", async e => {
       const parent = e.target.closest("[data-id]");
