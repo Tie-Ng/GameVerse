@@ -116,27 +116,34 @@ document.getElementById("addToWishlistBtn").addEventListener("click", () => {
     showToast(`${currentGame.name} is already in your wishlist.`);
   }
 });
-
-// ==== Comment System ====
 const commentInput = document.getElementById("commentInput");
 const submitCommentBtn = document.getElementById("submitCommentBtn");
 const commentsList = document.getElementById("commentsList");
 const sortSelect = document.getElementById("sortSelect");
+const anonymousCheckbox = document.getElementById("anonymousCheckbox");
 
 submitCommentBtn.addEventListener("click", async () => {
   if (!currentUserEmail || !commentInput.value.trim()) return;
+
+  const isAnonymous = anonymousCheckbox.checked;
+  const displayUser = isAnonymous ? "Anonymous" : currentUserEmail;
+
   await addDoc(collection(db, "comments"), {
     gameId,
-    user: currentUserEmail,
+    user: displayUser,
+    realUser: currentUserEmail,
     text: commentInput.value.trim(),
     likes: 0,
     timestamp: serverTimestamp()
   });
+
   commentInput.value = "";
+  anonymousCheckbox.checked = false;
   loadComments();
 });
 
 sortSelect.addEventListener("change", loadComments);
+
 async function loadComments() {
   const snapshot = await getDocs(query(collection(db, "comments")));
   let comments = [];
@@ -150,15 +157,23 @@ async function loadComments() {
   const likedKey = `liked_comments_${currentUserEmail}`;
   const likedList = JSON.parse(localStorage.getItem(likedKey)) || [];
 
-  if (sortSelect.value === "latest") comments.sort((a, b) => b.timestamp?.seconds - a.timestamp?.seconds);
-  else if (sortSelect.value === "like") comments.sort((a, b) => b.likes - a.likes);
+  if (sortSelect.value === "latest") {
+    comments.sort((a, b) => b.timestamp?.seconds - a.timestamp?.seconds);
+  } else if (sortSelect.value === "like") {
+    comments.sort((a, b) => b.likes - a.likes);
+  }
 
   commentsList.innerHTML = comments.map(c => {
-    const isOwner = c.user === currentUserEmail || currentUserEmail === 'admin@gmail.com';
+    const isOwner = (c.realUser ?? c.user) === currentUserEmail || currentUserEmail === 'admin@gmail.com';
     const isLiked = likedList.includes(c.id);
+    const showRealUser = currentUserEmail === 'admin@gmail.com' && c.user === 'Anonymous';
+
     return `
       <div class="bg-gray-700 p-4 rounded-lg" data-id="${c.id}">
-        <p class="text-sm text-gray-400">${c.user}</p>
+        <p class="text-sm text-gray-400">
+          ${c.user}
+          ${showRealUser ? `<span class="ml-2 text-yellow-400">(${c.realUser})</span>` : ""}
+        </p>
         <p class="text-white mt-1 comment-text">${c.text}</p>
         <textarea class="w-full mt-2 p-2 bg-gray-800 rounded hidden edit-textarea">${c.text}</textarea>
         <div class="flex justify-between items-center mt-2">
@@ -179,7 +194,7 @@ async function loadComments() {
     `;
   }).join("");
 
-  // === Like / Unlike functionality ===
+  // ==== Like / Unlike ====
   commentsList.querySelectorAll(".like-btn").forEach(btn => {
     btn.addEventListener("click", async e => {
       const commentId = e.target.getAttribute("data-id");
@@ -196,7 +211,6 @@ async function loadComments() {
       });
 
       const alreadyLiked = likedList.includes(commentId);
-
       if (btn.disabled) return;
       btn.disabled = true;
       setTimeout(() => btn.disabled = false, 1000);
@@ -214,7 +228,7 @@ async function loadComments() {
     });
   });
 
-  // === Edit functionality ===
+  // ==== Edit Comment ====
   commentsList.querySelectorAll(".edit-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       const parent = e.target.closest("[data-id]");
@@ -227,7 +241,7 @@ async function loadComments() {
     });
   });
 
-  // === Cancel edit ===
+  // ==== Cancel Edit ====
   commentsList.querySelectorAll(".cancel-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       const parent = e.target.closest("[data-id]");
@@ -240,7 +254,7 @@ async function loadComments() {
     });
   });
 
-  // === Save edited comment ===
+  // ==== Save Edited ====
   commentsList.querySelectorAll(".save-btn").forEach(btn => {
     btn.addEventListener("click", async e => {
       const parent = e.target.closest("[data-id]");
@@ -253,7 +267,7 @@ async function loadComments() {
     });
   });
 
-  // === Delete comment ===
+  // ==== Delete ====
   commentsList.querySelectorAll(".delete-btn").forEach(btn => {
     btn.addEventListener("click", async e => {
       const parent = e.target.closest("[data-id]");
@@ -265,6 +279,7 @@ async function loadComments() {
     });
   });
 }
+
 
 // ==== Helpers ====
 function getRequirementText() {

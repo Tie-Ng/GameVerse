@@ -49,6 +49,11 @@
     <!-- Comment Section -->
     <div class="bg-gray-800 p-6 rounded-lg shadow-xl">
       <h3 class="text-xl font-semibold text-indigo-400 mb-4">Comments</h3>
+      <div class="flex items-center gap-2 mt-4">
+  <input type="checkbox" id="anonymousCheckbox" class="form-checkbox text-indigo-500">
+  <label for="anonymousCheckbox" class="text-sm text-gray-300">Bình luận ẩn danh</label>
+</div>
+
       <div class="mb-4 flex justify-between items-center">
         <textarea id="commentInput" rows="3" placeholder="Write a comment..."
           class="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
@@ -57,6 +62,7 @@
           Post
         </button>
       </div>
+      
 
       <div class="mb-6 text-right">
         <label for="sortSelect" class="text-sm text-gray-300 mr-2">Filter:</label>
