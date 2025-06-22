@@ -169,29 +169,37 @@ async function loadComments() {
     const showRealUser = currentUserEmail === 'admin@gmail.com' && c.user === 'Anonymous';
 
     return `
-      <div class="bg-gray-700 p-4 rounded-lg" data-id="${c.id}">
-        <p class="text-sm text-gray-400">
-          ${c.user}
-          ${showRealUser ? `<span class="ml-2 text-yellow-400">(${c.realUser})</span>` : ""}
-        </p>
-        <p class="text-white mt-1 comment-text">${c.text}</p>
-        <textarea class="w-full mt-2 p-2 bg-gray-800 rounded hidden edit-textarea">${c.text}</textarea>
-        <div class="flex justify-between items-center mt-2">
-          <span class="text-sm text-gray-400">${new Date(c.timestamp?.seconds * 1000).toLocaleString()}</span>
-          <div class="text-sm text-gray-300 flex gap-2 items-center">
-            <button class="like-btn transition transform active:scale-110 duration-200 ${isLiked ? 'text-pink-500' : 'text-white'}" data-id="${c.id}">
-              ${isLiked ? '❤️' : '🤍'} ${c.likes}
-            </button>
-            ${isOwner ? `
-              <button class="text-blue-400 hover:underline edit-btn">Edit</button>
-              <button class="text-red-400 hover:underline delete-btn">Delete</button>
-              <button class="text-green-400 hover:underline save-btn hidden">Save</button>
-              <button class="text-yellow-400 hover:underline cancel-btn hidden">Cancel</button>
-            ` : ''}
-          </div>
-        </div>
+  <div class="bg-gray-700 p-4 rounded-lg" data-id="${c.id}">
+    <p class="text-sm text-gray-400">
+      ${c.user === 'Anonymous'
+        ? (c.realUser === currentUserEmail
+          ? 'Anonymous <span class="text-green-400 font-medium">(You)</span>'
+          : 'Anonymous')
+        : c.user
+      }
+      ${showRealUser && c.realUser ? `<span class="ml-2 text-yellow-400">(${c.realUser})</span>` : ""}
+    </p>
+
+    <p class="text-white mt-1 comment-text">${c.text}</p>
+    <textarea class="w-full mt-2 p-2 bg-gray-800 rounded hidden edit-textarea">${c.text}</textarea>
+
+    <div class="flex justify-between items-center mt-2">
+      <span class="text-sm text-gray-400">${new Date(c.timestamp?.seconds * 1000).toLocaleString()}</span>
+      <div class="text-sm text-gray-300 flex gap-2 items-center">
+        <button class="like-btn transition transform active:scale-110 duration-200 ${isLiked ? 'text-pink-500' : 'text-white'}" data-id="${c.id}">
+          ${isLiked ? '❤️' : '🤍'} ${c.likes}
+        </button>
+        ${isOwner ? `
+          <button class="text-blue-400 hover:underline edit-btn">Edit</button>
+          <button class="text-red-400 hover:underline delete-btn">Delete</button>
+          <button class="text-green-400 hover:underline save-btn hidden">Save</button>
+          <button class="text-yellow-400 hover:underline cancel-btn hidden">Cancel</button>
+        ` : ''}
       </div>
-    `;
+    </div>
+  </div>
+`;
+
   }).join("");
 
   // ==== Like / Unlike ====
